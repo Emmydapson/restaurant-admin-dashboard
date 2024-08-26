@@ -1,4 +1,6 @@
 'use client';
+
+import Image from 'next/image';
 import React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -19,7 +21,7 @@ export default function RootLayout({ children }) {
       <body>
         <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold flex items-center">
-            <img src="/images/logo 3 colori 2.png" alt="Look My Map Logo" className="w-10 h-10 mr-2" />
+            <Image src="/images/logo 3 colori 2.png" alt="Look My Map Logo" className="w-10 h-10 mr-2" />
             Dashboard Amministrativa Look My Map
           </h1>
           <div className="relative">

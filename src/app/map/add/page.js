@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -51,7 +52,7 @@ export default function AddMap() {
             />
             {mapImage && (
               <div className="mt-4">
-                <img src={mapImage} alt="Map Preview" className="w-full h-64 object-cover" />
+                <Image src={mapImage} alt="Map Preview" className="w-full h-64 object-cover" />
               </div>
             )}
           </div>
