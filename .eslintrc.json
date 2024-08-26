@@ -1,3 +1,9 @@
 {
-  "extends": "next/core-web-vitals"
+  "plugins": ["babel"],
+  "rules": {
+    "babel/new-cap": 1,
+    "babel/no-invalid-this": 1,
+    "babel/semi": 1,
+    "babel/no-unused-expressions": 1
+  }
 }
