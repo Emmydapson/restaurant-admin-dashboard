@@ -25,7 +25,7 @@
     }
   },
   "rules": {
-    "react/prop-types": ["error"],
+    "react/prop-types": "off",
     "babel/new-cap": "warn",
     "babel/no-invalid-this": "warn",
     "babel/semi": "warn",
