@@ -22,7 +22,7 @@ export default function ManageMaps() {
           ];
           setMaps(fetchedMaps);
           setLoading(false);
-        }, 2000);
+        }, 8000);
       } catch (error) {
         setError('Failed to load maps');
         setLoading(false);
