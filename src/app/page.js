@@ -1,4 +1,3 @@
-// src/app/page.js
 import Link from 'next/link';
 import React from 'react';
 
@@ -10,22 +9,22 @@ export default function DashboardPage() {
         <div className="bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold mb-2 text-gray-700">Gestione Annunci</h2>
           <p className="mb-4 text-gray-600">Gestisci tutti i luoghi straordinari elencati nella tua app.</p>
-          <Link href="/listings">
-            <span className="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors cursor-pointer">Vai agli Annunci</span>
+          <Link href="/listings" className="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+            Vai agli Annunci
           </Link>
         </div>
         <div className="bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold mb-2 text-gray-700">Gestione Categorie</h2>
           <p className="mb-4 text-gray-600">Gestisci le diverse categorie di luoghi.</p>
-          <Link href="/categories">
-            <span className="inline-block bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors cursor-pointer">Vai alle Categorie</span>
+          <Link href="/categories" className="inline-block bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors">
+            Vai alle Categorie
           </Link>
         </div>
         <div className="bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold mb-2 text-gray-700">Gestione Mappe</h2>
           <p className="mb-4 text-gray-600">Gestisci le mappe per le varie città in Italia.</p>
-          <Link href="/map">
-            <span className="inline-block bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-colors cursor-pointer">Vai alle Mappe</span>
+          <Link href="/map" className="inline-block bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-colors">
+            Vai alle Mappe
           </Link>
         </div>
       </div>

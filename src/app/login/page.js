@@ -1,18 +1,23 @@
 'use client';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add authentication logic here
-    localStorage.setItem('isAuthenticated', true);
-    router.push('/'); // Redirect to the main dashboard
+    
+    // Add authentication logic here (replace with real logic)
+    if (email === 'admin@example.com' && password === 'password') {
+      localStorage.setItem('isAuthenticated', 'true');
+      router.push('/'); // Redirect to the main dashboard
+    } else {
+      setError('Invalid email or password.');
+    }
   };
 
   return (
@@ -25,6 +30,7 @@ export default function LoginPage() {
             <input
               type="email"
               id="email"
+              aria-label="Email address"
               className="w-full px-3 py-2 border border-gray-300 rounded"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -36,15 +42,19 @@ export default function LoginPage() {
             <input
               type="password"
               id="password"
+              aria-label="Password"
               className="w-full px-3 py-2 border border-gray-300 rounded"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
+          {error && (
+            <div className="mb-4 text-red-500">{error}</div>
+          )}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
             Login
           </button>
         </form>

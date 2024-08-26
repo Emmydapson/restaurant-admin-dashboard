@@ -4,6 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
+import PropTypes from 'prop-types';
 import './globals.css';
 import LogoutButton from './login/LogoutButton'; // Adjust import path if necessary
 
@@ -21,7 +22,13 @@ export default function RootLayout({ children }) {
       <body>
         <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold flex items-center">
-            <Image src="/images/logo 3 colori 2.png" alt="Look My Map Logo" className="w-10 h-10 mr-2" />
+            <Image 
+              src="/images/logo 3 colori 2.png" 
+              alt="Look My Map Logo" 
+              width={40}  // Adjust width according to your design
+              height={40} // Adjust height according to your design
+              className="mr-2" 
+            />
             Dashboard Amministrativa Look My Map
           </h1>
           <div className="relative">
@@ -56,3 +63,8 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+// Add PropTypes validation
+RootLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+};

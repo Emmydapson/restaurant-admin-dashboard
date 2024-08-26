@@ -6,7 +6,7 @@ import React from 'react';
 
 export default function EditListingPage({ params }) {
   const router = useRouter();
-  const { id } = params; // Get the id from the params
+  const { id } = params;
   const [listing, setListing] = useState({
     coverImage: '',
     logo: '',
@@ -25,21 +25,18 @@ export default function EditListingPage({ params }) {
   useEffect(() => {
     const fetchListing = async () => {
       if (id) {
-        // Simulated API call to fetch listing data by ID
-        const fetchedListing = {
-          coverImage: '/images/cover2.jpg',
-          logo: '/images/logo2.png',
-          title: 'Bar B',
-          category: 'Bar',
-          address: '456 Side St, City B',
-          description: 'A vibrant bar with live music.',
-          website: 'https://bar-b.com',
-          googleNavigator: 'https://maps.google.com/?q=456+Side+St,+City+B',
-          email: 'contact@bar-b.com',
-          phone: '+0987654321',
-        };
-        setListing(fetchedListing);
-        setLoading(false);
+        try {
+          const response = await fetch(`/api/listings/${id}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch the listing.');
+          }
+          const fetchedListing = await response.json();
+          setListing(fetchedListing);
+          setLoading(false);
+        } catch (err) {
+          setError('Failed to load listing data. Please try again later.');
+          setLoading(false);
+        }
       }
     };
 
@@ -47,7 +44,8 @@ export default function EditListingPage({ params }) {
   }, [id]);
 
   const handleChange = (e) => {
-    setListing({ ...listing, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setListing((prevListing) => ({ ...prevListing, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -55,7 +53,6 @@ export default function EditListingPage({ params }) {
     setError(''); // Clear any existing error messages
 
     try {
-      // Simulate API call to update the listing
       const response = await fetch(`/api/listings/${id}`, {
         method: 'PUT',
         headers: {
@@ -68,13 +65,9 @@ export default function EditListingPage({ params }) {
         throw new Error('Failed to update the listing. Please try again.');
       }
 
-      const updatedListing = await response.json();
-      console.log('Updated listing:', updatedListing);
-
-      // Redirect back to the listings page after successful update
       router.push('/listings');
     } catch (err) {
-      setError(err.message);
+      setError('An error occurred while updating the listing. Please try again.');
     }
   };
 
@@ -93,16 +86,124 @@ export default function EditListingPage({ params }) {
       <form onSubmit={handleSubmit}>
         {/* Form Fields */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Title</label>
+          <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700">Cover Image URL</label>
           <input
             type="text"
+            id="coverImage"
+            name="coverImage"
+            value={listing.coverImage}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="logo" className="block text-sm font-medium text-gray-700">Logo URL</label>
+          <input
+            type="text"
+            id="logo"
+            name="logo"
+            value={listing.logo}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+          <input
+            type="text"
+            id="title"
             name="title"
             value={listing.title}
             onChange={handleChange}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
           />
         </div>
-        {/* Additional fields follow similar pattern */}
+        <div className="mb-4">
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+          <input
+            type="text"
+            id="category"
+            name="category"
+            value={listing.category}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            value={listing.address}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            value={listing.description}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="website" className="block text-sm font-medium text-gray-700">Website URL</label>
+          <input
+            type="text"
+            id="website"
+            name="website"
+            value={listing.website}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="googleNavigator" className="block text-sm font-medium text-gray-700">Google Navigator URL</label>
+          <input
+            type="text"
+            id="googleNavigator"
+            name="googleNavigator"
+            value={listing.googleNavigator}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={listing.email}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
+          <input
+            type="text"
+            id="phone"
+            name="phone"
+            value={listing.phone}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
         <button
           type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded"

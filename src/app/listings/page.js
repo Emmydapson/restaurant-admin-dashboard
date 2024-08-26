@@ -1,15 +1,14 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 export default function ListingsPage() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [listings, setListings] = useState([]); // State to store listings
+  const [listings, setListings] = useState([]);
 
   // Ensure the component is mounted before rendering (to avoid SSR-related issues)
   useEffect(() => {
@@ -148,40 +147,36 @@ export default function ListingsPage() {
                   </div>
                   <p className="text-gray-600 mb-2">{listing.description}</p>
                   <div className="flex items-center space-x-4">
-                    <Link href={listing.website} passHref>
+                    <Link href={listing.website} className="cursor-pointer">
                       <Image
                         src="/icons/website.svg"
                         alt="Website"
                         width={20}
                         height={20}
-                        className="cursor-pointer"
                       />
                     </Link>
-                    <Link href={listing.googleNavigator} passHref>
+                    <Link href={listing.googleNavigator} className="cursor-pointer">
                       <Image
                         src="/icons/location icon.svg"
                         alt="Navigate"
                         width={20}
                         height={20}
-                        className="cursor-pointer"
                       />
                     </Link>
-                    <Link href={`mailto:${listing.email}`} passHref>
+                    <Link href={`mailto:${listing.email}`} className="cursor-pointer">
                       <Image
                         src="/icons/email-icon.svg"
                         alt="Email"
                         width={20}
                         height={20}
-                        className="cursor-pointer"
                       />
                     </Link>
-                    <Link href={`tel:${listing.phone}`} passHref>
+                    <Link href={`tel:${listing.phone}`} className="cursor-pointer">
                       <Image
                         src="/icons/phone icon.svg"
                         alt="Phone"
                         width={20}
                         height={20}
-                        className="cursor-pointer"
                       />
                     </Link>
                   </div>

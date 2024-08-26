@@ -1,6 +1,5 @@
 'use client';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -18,6 +17,8 @@ export default function AddListingPage() {
     email: '',
     phone: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setListing({ ...listing, [e.target.name]: e.target.value });
@@ -36,14 +37,18 @@ export default function AddListingPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
+
     try {
-      // Simulate API call to add the listing
+      const formData = new FormData();
+      for (const key in listing) {
+        formData.append(key, listing[key]);
+      }
+
       const response = await fetch('/api/listings', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(listing),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -56,13 +61,17 @@ export default function AddListingPage() {
       // Redirect to the listings page after successful addition
       router.push('/listings');
     } catch (err) {
+      setError(err.message);
       console.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Add New Listing</h1>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit}>
         {/* Form Fields */}
         <div className="mb-4">
@@ -94,8 +103,9 @@ export default function AddListingPage() {
         <button
           type="submit"
           className="bg-green-500 text-white py-2 px-4 rounded"
+          disabled={loading}
         >
-          Add Listing
+          {loading ? 'Adding...' : 'Add Listing'}
         </button>
       </form>
     </div>
