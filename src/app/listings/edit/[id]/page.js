@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function EditListingPage({ params }) {
   const router = useRouter();
@@ -214,3 +215,9 @@ export default function EditListingPage({ params }) {
     </div>
   );
 }
+
+EditListingPage.propTypes = {
+  params: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+};
