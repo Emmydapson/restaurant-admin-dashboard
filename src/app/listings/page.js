@@ -147,7 +147,7 @@ export default function ListingsPage() {
                   </div>
                   <p className="text-gray-600 mb-2">{listing.description}</p>
                   <div className="flex items-center space-x-4">
-                    <Link href={listing.website} className="cursor-pointer">
+                    <Link href={listing.website} passHref>
                       <Image
                         src="/icons/website.svg"
                         alt="Website"
@@ -155,7 +155,7 @@ export default function ListingsPage() {
                         height={20}
                       />
                     </Link>
-                    <Link href={listing.googleNavigator} className="cursor-pointer">
+                    <Link href={listing.googleNavigator} passHref>
                       <Image
                         src="/icons/location icon.svg"
                         alt="Navigate"
@@ -163,7 +163,7 @@ export default function ListingsPage() {
                         height={20}
                       />
                     </Link>
-                    <Link href={`mailto:${listing.email}`} className="cursor-pointer">
+                    <Link href={`mailto:${listing.email}`} passHref>
                       <Image
                         src="/icons/email-icon.svg"
                         alt="Email"
@@ -171,7 +171,7 @@ export default function ListingsPage() {
                         height={20}
                       />
                     </Link>
-                    <Link href={`tel:${listing.phone}`} className="cursor-pointer">
+                    <Link href={`tel:${listing.phone}`} passHref>
                       <Image
                         src="/icons/phone icon.svg"
                         alt="Phone"
