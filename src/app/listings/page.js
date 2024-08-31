@@ -1,195 +1,67 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function ListingsPage() {
-  const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(''); // New error state
 
-  // Ensure the component is mounted before rendering (to avoid SSR-related issues)
   useEffect(() => {
-    setIsMounted(true);
-    // Simulate data fetching
-    setTimeout(() => {
-      const Listings = [
-        {
-          id: 1,
-          coverImage: '/images/image 1.png',
-          logo: '/images/logo (2).png',
-          title: 'Evoque',
-          category: 'Restaurant',
-          address: 'Roma vicolo, Barberini',
-          description: "Benvenuti al Evoque, un ristorante di cucina innovativa e gastronomia internazionale situato nel cuore di Roma. Qui, tradizione e modernità si incontrano per creare un'esperienza culinaria unica e sorprendente.",
-          website: 'https://restaurant-a.com',
-          googleNavigator: 'https://maps.google.com/?q=123+Main+St,+City+A',
-          email: 'contact@restaurant-a.com',
-          phone: '+1234567890',
-          categoryIcon: '/icons/restaurant.png',
-        },
-        {
-          id: 2,
-          coverImage: '/images/blue note.png',
-          logo: '/images/logo2.png',
-          title: 'Blue Note',
-          category: 'Bar e movida',
-          address: '456 Side St, City B',
-          description: 'A vibrant bar with live music.',
-          website: 'https://website.svg',
-          googleNavigator: 'https://maps.google.com/?q=456+Side+St,+City+B',
-          email: 'contact@bar-b.com',
-          phone: '+0987654321',
-          categoryIcon: '/icons/bar.svg',
-        },
-        {
-          id: 3,
-          coverImage: '/images/sound.png',
-          logo: '/images/logo3.png',
-          title: 'Ministry of sound',
-          category: 'svago ed Eventi',
-          address: 'Trieste, via XX Settembre',
-          description: 'a club with the best DJ services.',
-          website: 'https://shopping-c.com',
-          googleNavigator: 'https://maps.google.com/?q=789+Market+St,+City+C',
-          email: 'contact@shopping-c.com',
-          phone: '+1122334455',
-          categoryIcon: '/icons/event.svg',
-        },
-        {
-          id: 4,
-          coverImage: '/images/tourism.png',
-          logo: '/images/logo4.png',
-          title: 'Pinacoteca del brera',
-          category: 'Tourism',
-          address: 'Milano via brera',
-          description: 'A popular tourist attraction.',
-          website: 'https://tourism-d.com',
-          googleNavigator: 'https://maps.google.com/?q=101+Hill+Rd,+City+D',
-          email: 'contact@tourism-d.com',
-          phone: '+2233445566',
-          categoryIcon: '/icons/tourismo.svg',
-        },
-      ];
-      setListings(Listings); // Store the listings in state
-      setLoading(false);
-    }, 2000); // Simulating a 2-second data fetch delay
-  }, []); // Empty dependency array ensures this effect runs once
+    const fetchListings = async () => {
+      setLoading(true);
+      setError(''); // Reset error state before fetching
+      try {
+        const response = await fetch('https://look-my-app.vercel.app/api/listings/');
+        if (!response.ok) throw new Error('Failed to fetch listings');
+        const data = await response.json();
+        setListings(data);
+      } catch (err) {
+        console.error(err.message);
+        setError('An error occurred while fetching listings. Please try again.'); // Set error message
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!isMounted) return null;
-
-  const handleEditClick = (id) => {
-    router.push(`/listings/edit/${id}`);
-  };
-
-  const handleAddListing = () => {
-    router.push('/listings/add');
-  };
+    fetchListings();
+  }, []);
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Manage Listings</h1>
+      <h1 className="text-2xl font-bold mb-6">Listings</h1>
+      <Link href="/listings/add" className="text-blue-500">Add New Listing</Link>
+      
+      {error && (
+        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded flex items-center mt-6">
+          <svg
+            className="w-5 h-5 mr-2 text-red-700"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
 
       {loading ? (
-        <div className="flex justify-center">
-          <Image src="/icons/bouncing-circles.svg" alt="Loading" width={50} height={50} />
-        </div>
+        <div className="mt-4 text-center text-gray-600">Loading...</div>
       ) : (
-        <div>
-          <button
-            onClick={handleAddListing}
-            className="mb-6 bg-green-500 text-white py-2 px-4 rounded"
-          >
-            Add New Listing
-          </button>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {listings.map((listing) => (
-              <div key={listing.id} className="bg-white shadow-md rounded-lg overflow-hidden">
-                <Image
-                  src={listing.coverImage}
-                  alt={listing.title}
-                  width={400}
-                  height={250}
-                  className="w-full h-64 object-cover"
-                />
-                <div className="p-4">
-                  <div className="flex items-center mb-2">
-                    <Image
-                      src={listing.logo}
-                      alt={`${listing.title} logo`}
-                      width={50}
-                      height={50}
-                      className="mr-2"
-                    />
-                    <h2 className="text-xl font-semibold">{listing.title}</h2>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <Image
-                      src={listing.categoryIcon}
-                      alt={`${listing.category} icon`}
-                      width={20}
-                      height={20}
-                      className="mr-2"
-                    />
-                    <p className="text-gray-600">{listing.category}</p>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <Image
-                      src="/icons/location icon.svg"
-                      alt="Location"
-                      width={20}
-                      height={20}
-                      className="mr-2"
-                    />
-                    <p className="text-gray-600">{listing.address}</p>
-                  </div>
-                  <p className="text-gray-600 mb-2">{listing.description}</p>
-                  <div className="flex items-center space-x-4">
-                    <Link href={listing.website} passHref>
-                      <Image
-                        src="/icons/website.svg"
-                        alt="Website"
-                        width={20}
-                        height={20}
-                      />
-                    </Link>
-                    <Link href={listing.googleNavigator} passHref>
-                      <Image
-                        src="/icons/location icon.svg"
-                        alt="Navigate"
-                        width={20}
-                        height={20}
-                      />
-                    </Link>
-                    <Link href={`mailto:${listing.email}`} passHref>
-                      <Image
-                        src="/icons/email-icon.svg"
-                        alt="Email"
-                        width={20}
-                        height={20}
-                      />
-                    </Link>
-                    <Link href={`tel:${listing.phone}`} passHref>
-                      <Image
-                        src="/icons/phone icon.svg"
-                        alt="Phone"
-                        width={20}
-                        height={20}
-                      />
-                    </Link>
-                  </div>
-                  <button
-                    onClick={() => handleEditClick(listing.id)}
-                    className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="grid gap-4 mt-4">
+          {listings.map((listing) => (
+            <div key={listing.id} className="border p-4 rounded shadow-md">
+              {/* Listing details with edit link */}
+              <Image src={listing.coverImage} alt={listing.title} width={100} height={100} className="mb-2 rounded" />
+              <h2 className="text-lg font-bold">{listing.title}</h2>
+              <p className="text-gray-600">{listing.address}</p>
+              <p className="text-gray-700">{listing.description}</p>
+              <Link href={`/listings/edit/${listing.id}`} className="text-blue-500 mt-2 block">Edit</Link>
+            </div>
+          ))}
         </div>
       )}
     </div>

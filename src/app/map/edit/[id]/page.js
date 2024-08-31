@@ -1,52 +1,69 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useRouter, useParams } from 'next/navigation';
+import axios from 'axios';
 
 export default function EditMap() {
   const { id } = useParams();
   const router = useRouter();
   const [city, setCity] = useState('');
-  const [mapImage, setMapImage] = useState(null);
-  const [existingMapImage, setExistingMapImage] = useState('');
-  const [imageError, setImageError] = useState('');
+  const [apiKey, setApiKey] = useState(''); // Holds the Google Maps API key
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate fetching the map details (replace with real API call)
-    const fetchMapDetails = () => {
-      setTimeout(() => {
-        const mapData = {
-          city: 'Roma',
-          mapImage: '/images/image (1).png',
-        };
-        setCity(mapData.city);
-        setExistingMapImage(mapData.mapImage);
-      }, 1000);
+    // Fetch the API key securely from the backend
+    const fetchApiKey = async () => {
+      const token = localStorage.getItem('token'); // Securely get the token
+      try {
+        const response = await axios.get('https://look-my-app.vercel.app/api/maps/api-key', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setApiKey(response.data.apiKey);
+      } catch (error) {
+        console.error('Failed to fetch API key', error);
+      }
     };
 
+    // Fetch map details for editing
+    const fetchMapDetails = async () => {
+      try {
+        const response = await axios.get(`https://look-my-app.vercel.app/api/maps/:id`);
+        setCity(response.data.city);
+      } catch (error) {
+        console.error('Failed to fetch map details', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApiKey();
     fetchMapDetails();
   }, [id]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate updating the map details (replace with real API call)
-    setTimeout(() => {
-      console.log({ city, mapImage: mapImage || existingMapImage });
-      alert('Map updated successfully!');
-      router.push('/map'); // Redirect back to the maps page
-    }, 1000);
-  };
+    setLoading(true);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.type.startsWith('image/')) {
-        setImageError('');
-        setMapImage(URL.createObjectURL(file)); // Preview the image
-      } else {
-        setImageError('Invalid file type. Please select an image.');
-        setMapImage(null); // Clear the preview if invalid file
-      }
+    const token = localStorage.getItem('token');
+
+    try {
+      await axios.put(
+        `https://look-my-app.vercel.app/api/maps/:id`,
+        { city }, // Send updated city data
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('Map updated successfully!');
+      router.push('/map'); // Redirect to the maps page
+    } catch (error) {
+      console.error('Failed to update map', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,32 +82,22 @@ export default function EditMap() {
             required
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Map Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-            aria-label="Select map image"
-          />
-          {imageError && (
-            <p className="text-red-500 mt-2">{imageError}</p>
-          )}
-          {(mapImage || existingMapImage) && (
-            <div className="mt-4">
-              <Image
-                src={mapImage || existingMapImage}
-                alt="Map Preview"
-                width={400}
-                height={250}
-                className="w-full h-64 object-cover"
-              />
-            </div>
-          )}
-        </div>
-        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
-          Update Map
+        {loading ? (
+          <div>Loading map preview...</div>
+        ) : (
+          <div className="mt-4">
+            <iframe
+              width="100%"
+              height="250"
+              frameBorder="0"
+              style={{ border: 0 }}
+              src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${city}`}
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
+        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded" disabled={loading}>
+          {loading ? 'Updating...' : 'Update Map'}
         </button>
       </form>
     </div>

@@ -1,34 +1,42 @@
 'use client';
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function AddMap() {
   const router = useRouter();
   const [city, setCity] = useState('');
-  const [mapImage, setMapImage] = useState(null);
-  const [imageError, setImageError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate adding the new map (replace with real API call)
-    setTimeout(() => {
-      console.log({ city, mapImage });
-      alert('Map added successfully!');
-      router.push('/map'); // Redirect back to the maps page
-    }, 1000);
-  };
+    
+    if (!city) {
+      setError('Please enter a city name.');
+      return;
+    }
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.type.startsWith('image/')) {
-        setImageError('');
-        setMapImage(URL.createObjectURL(file)); // Preview the image
-      } else {
-        setImageError('Invalid file type. Please select an image.');
-        setMapImage(null); // Clear the preview if invalid file
-      }
+    const token = localStorage.getItem('token');
+
+    try {
+      setLoading(true);
+      await axios.post(
+        'https://look-my-app.vercel.app/api/maps',
+        { city }, // Only send the city name
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('Map added successfully!');
+      setLoading(false);
+      router.push('/map'); // Redirect to the map page to see the update
+    } catch (error) {
+      console.error('Failed to add map', error);
+      setError('Error adding map');
+      setLoading(false);
     }
   };
 
@@ -47,32 +55,19 @@ export default function AddMap() {
             required
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Map Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-            aria-label="Select map image"
-          />
-          {imageError && (
-            <p className="text-red-500 mt-2">{imageError}</p>
-          )}
-          {mapImage && (
-            <div className="mt-4">
-              <Image
-                src={mapImage}
-                alt="Map Preview"
-                width={400}
-                height={250}
-                className="w-full h-64 object-cover"
-              />
-            </div>
-          )}
-        </div>
-        <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
-          Add Map
+        
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 text-red-800 bg-red-100 border border-red-300 rounded flex items-center">
+            <svg className="w-5 h-5 mr-2 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <p>{error}</p>
+          </div>
+        )}
+
+        <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors" disabled={loading}>
+          {loading ? 'Adding...' : 'Add Map'}
         </button>
       </form>
     </div>

@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 export default function AddListingPage() {
   const router = useRouter();
@@ -20,17 +19,13 @@ export default function AddListingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    setListing({ ...listing, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setListing({ ...listing, [e.target.name]: e.target.value });
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setListing({ ...listing, [e.target.name]: reader.result });
-      };
+      reader.onloadend = () => setListing({ ...listing, [e.target.name]: reader.result });
       reader.readAsDataURL(file);
     }
   };
@@ -38,75 +33,185 @@ export default function AddListingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
+    setLoading(true);
     try {
       const formData = new FormData();
-      for (const key in listing) {
-        formData.append(key, listing[key]);
-      }
+      Object.entries(listing).forEach(([key, value]) => formData.append(key, value));
 
-      const response = await fetch('/api/listings', {
+      const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add the listing. Please try again.');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add the listing.');
       }
 
-      const newListing = await response.json();
-      console.log('New listing added:', newListing);
-
-      // Redirect to the listings page after successful addition
-      router.push('/listings');
+      router.push('/listings'); // Redirect to the listings page
     } catch (err) {
       setError(err.message);
-      console.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Add New Listing</h1>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        {/* Form Fields */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Title</label>
+    <div className="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-md mt-8">
+      <h1 className="text-3xl font-semibold mb-6 text-center text-gray-800">Add New Listing</h1>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6 text-center">
+          {error}
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Title */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Title</label>
           <input
             type="text"
             name="title"
             value={listing.title}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Title"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Cover Image</label>
+
+        {/* Cover Image */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Cover Image</label>
           <input
             type="file"
             name="coverImage"
-            accept="image/*"
             onChange={handleImageChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+            className="w-full py-2 px-4 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           />
-          {listing.coverImage && (
-            <div className="mt-4">
-              <Image src={listing.coverImage} alt="Cover Preview" width={400} height={250} />
-            </div>
-          )}
         </div>
-        {/* Additional fields follow similar pattern */}
-        <button
-          type="submit"
-          className="bg-green-500 text-white py-2 px-4 rounded"
-          disabled={loading}
-        >
-          {loading ? 'Adding...' : 'Add Listing'}
-        </button>
+
+        {/* Logo */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Logo</label>
+          <input
+            type="file"
+            name="logo"
+            onChange={handleImageChange}
+            required
+            className="w-full py-2 px-4 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Category</label>
+          <input
+            type="text"
+            name="category"
+            value={listing.category}
+            onChange={handleChange}
+            placeholder="Category"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Address */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Address</label>
+          <input
+            type="text"
+            name="address"
+            value={listing.address}
+            onChange={handleChange}
+            placeholder="Address"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Description</label>
+          <textarea
+            name="description"
+            value={listing.description}
+            onChange={handleChange}
+            placeholder="Description"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Website */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Website</label>
+          <input
+            type="url"
+            name="website"
+            value={listing.website}
+            onChange={handleChange}
+            placeholder="Website"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Google Navigator */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Google Navigator Link</label>
+          <input
+            type="url"
+            name="googleNavigator"
+            value={listing.googleNavigator}
+            onChange={handleChange}
+            placeholder="Google Navigator Link"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={listing.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Phone</label>
+          <input
+            type="tel"
+            name="phone"
+            value={listing.phone}
+            onChange={handleChange}
+            placeholder="Phone"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <div className="text-center">
+          <button
+            type="submit"
+            className={`w-full py-3 px-4 bg-blue-500 text-white font-semibold rounded-md transition duration-200 hover:bg-blue-600 ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={loading}
+          >
+            {loading ? 'Adding...' : 'Add Listing'}
+          </button>
+        </div>
       </form>
     </div>
   );

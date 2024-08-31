@@ -2,34 +2,45 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function ManageMaps() {
   const router = useRouter();
   const [maps, setMaps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [apiKey, setApiKey] = useState('');
 
   useEffect(() => {
-    // Simulate fetching map data
+    // Fetch map data from backend
     const fetchData = async () => {
       try {
-        // Simulate network request
-        setTimeout(() => {
-          const fetchedMaps = [
-            { id: 1, city: 'Roma', mapImage: '/images/image (1).png' },
-            { id: 2, city: 'Milano', mapImage: '/images/image (1).png' },
-            { id: 3, city: 'Trieste', mapImage: '/images/image (1).png' },
-          ];
-          setMaps(fetchedMaps);
-          setLoading(false);
-        }, 8000);
+        const response = await axios.get('https://look-my-app.vercel.app//api/maps');
+        setMaps(response.data);
+        setLoading(false);
       } catch (error) {
         setError('Failed to load maps');
         setLoading(false);
       }
     };
 
+    // Fetch API key securely from backend
+    const fetchApiKey = async () => {
+      const token = localStorage.getItem('token'); // Securely get the token
+      try {
+        const response = await axios.get('https://look-my-app.vercel.app/api/maps/api-key', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setApiKey(response.data.apiKey);
+      } catch (error) {
+        console.error('Failed to fetch API key', error);
+      }
+    };
+
     fetchData();
+    fetchApiKey();
   }, []);
 
   const handleEditClick = (id) => {
@@ -67,20 +78,21 @@ export default function ManageMaps() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {maps.map((map) => (
               <div
-                key={map.id}
+                key={map._id}
                 className="bg-white shadow-md rounded-lg overflow-hidden"
               >
-                <Image
-                  src={map.mapImage}
-                  alt={`Map of ${map.city}`}
-                  width={400}
-                  height={250}
-                  className="w-full h-64 object-cover"
-                />
+                <iframe
+                  width="100%"
+                  height="250"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${map.city}`}
+                  allowFullScreen
+                ></iframe>
                 <div className="p-4">
                   <h2 className="text-xl font-semibold">{map.city}</h2>
                   <button
-                    onClick={() => handleEditClick(map.id)}
+                    onClick={() => handleEditClick(map._id)}
                     className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
                     aria-label={`Edit map of ${map.city}`}
                   >

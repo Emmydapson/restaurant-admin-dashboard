@@ -1,32 +1,51 @@
 'use client';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 export default function ManageCategories() {
   const [categoryName, setCategoryName] = useState('');
-  const [categories, setCategories] = useState([
-    { name: 'Ristoranti', icon: '/images/icon_ristoranti.png' },
-    { name: 'Alberghi', icon: '/images/icon_alberghi.png' },
-    { name: 'Bar e Movida', icon: '/images/icon_bar_e_movida.png' },
-    { name: 'Shopping', icon: '/images/icon_shopping.png' },
-    { name: 'Servizi', icon: '/images/icon_servizi.png' },
-    { name: 'Svago ed Eventi', icon: '/images/icon_svago_ed_eventi.png' },
-    { name: 'Turismo', icon: '/images/icon_turismo.png' },
-    { name: 'Trasporti', icon: '/images/icon_trasporti.png' },
-    { name: 'Info', icon: '/images/icon_info.png' },
-  ]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleAddCategory = () => {
+  // Fetch categories from backend
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('https://look-my-app.vercel.app/api/categories/'); // Replace with your backend URL
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const handleAddCategory = async () => {
     if (categoryName.trim() === '') return;
 
     const newCategory = {
       name: categoryName,
-      icon: '/icons/default-icon.svg', // Default icon for new categories
+      iconUrl: '/icons/default-icon.svg', // Default icon for new categories
     };
 
-    setCategories([...categories, newCategory]);
-    setCategoryName(''); // Clear the input field after adding
+    try {
+      const response = await fetch('https://look-my-app.vercel.app/api/categories/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newCategory),
+      });
+      if (response.ok) {
+        const addedCategory = await response.json();
+        setCategories([...categories, addedCategory]);
+        setCategoryName(''); // Clear the input field after adding
+      } else {
+        console.error('Error adding category');
+      }
+    } catch (error) {
+      console.error('Error adding category:', error);
+    }
   };
 
   return (
@@ -55,7 +74,7 @@ export default function ManageCategories() {
             className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center text-center"
           >
             <Image
-              src={category.icon}
+              src={category.iconUrl}
               alt={`${category.name} Icon`}
               width={64}
               height={64}

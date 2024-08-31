@@ -8,15 +8,27 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Add authentication logic here (replace with real logic)
-    if (email === 'admin@example.com' && password === 'password') {
-      localStorage.setItem('isAuthenticated', 'true');
-      router.push('/'); // Redirect to the main dashboard
-    } else {
-      setError('Invalid email or password.');
+
+    try {
+      const response = await fetch('https://look-my-app.vercel.app/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token); // Replace this with cookies for production use
+
+        router.push('/'); // Redirect to the main dashboard
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Invalid login credentials. Please try again.');
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection and try again.');
     }
   };
 
@@ -50,7 +62,9 @@ export default function LoginPage() {
             />
           </div>
           {error && (
-            <div className="mb-4 text-red-500">{error}</div>
+            <div className="mb-4 text-red-500 bg-red-100 p-2 rounded">
+              {error}
+            </div>
           )}
           <button
             type="submit"
@@ -58,6 +72,18 @@ export default function LoginPage() {
             Login
           </button>
         </form>
+        {/* Not registered? link */}
+        <div className="mt-4 text-center">
+          <p className="text-gray-700">
+            Not registered?{' '}
+            <button
+              onClick={() => router.push('/register')} // Redirect to register page
+              className="text-blue-500 hover:underline"
+            >
+              Create an account
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
