@@ -5,7 +5,7 @@ import Image from 'next/image';
 export default function ManageCategories() {
   const [categoryName, setCategoryName] = useState('');
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+  
 
   // Fetch categories from backend
   useEffect(() => {
