@@ -11,8 +11,8 @@ const useAuth = () => {
     const checkAuth = async () => {
       try {
         const response = await fetch('https://look-my-app.vercel.app/api/auth/verify-token', {
-          method: 'POST',  // Ensure the backend is set up to handle this method
-          credentials: 'include', // Send cookies with the request
+          method: 'GET',  // Use GET method to match backend
+          credentials: 'include', // Ensure cookies are sent with the request
         });
 
         if (response.ok) {
