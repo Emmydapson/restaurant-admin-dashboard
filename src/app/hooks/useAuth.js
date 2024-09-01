@@ -9,12 +9,25 @@ const useAuth = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      const token = localStorage.getItem('authToken'); // Get the token from local storage
+
+      if (!token) {
+        console.warn('No token found in local storage. Redirecting to login...');
+        setAuthenticated(false);
+        router.push('/login'); // Redirect to login page if no token is found
+        setLoading(false);
+        return;
+      }
+
       try {
         console.log('Verifying authentication token...');
 
         const response = await fetch('https://look-my-app.vercel.app/api/auth/verify-token', {
-          method: 'GET', // Use GET to match backend method
-          credentials: 'include', // Ensure cookies are sent with the request
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Send token in Authorization header
+          },
         });
 
         if (response.ok) {
@@ -23,6 +36,7 @@ const useAuth = () => {
           console.log('Token verification successful. User authenticated.');
         } else {
           // Invalid token or error; user is not authenticated
+          localStorage.removeItem('authToken'); // Clear invalid token
           setAuthenticated(false);
           console.warn('Token verification failed or token is invalid. Redirecting to login...');
           router.push('/login'); // Redirect to login page if not authenticated

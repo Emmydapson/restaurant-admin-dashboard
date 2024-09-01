@@ -11,6 +11,10 @@ export default function LogoutButton() {
     if (confirmLogout) {
       setLoading(true); // Start loading state
       try {
+        // Remove the token from local storage
+        localStorage.removeItem('authToken');
+
+        // Call the backend logout API if needed (optional)
         const response = await fetch('https://look-my-app.vercel.app/api/auth/logout', {
           method: 'POST',
           credentials: 'include', // Ensure cookies are included in the request

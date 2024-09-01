@@ -18,10 +18,15 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-        credentials: 'include', // Ensure cookies are sent with the request
       });
 
       if (response.ok) {
+        const data = await response.json();
+        const token = data.token; // Assuming the backend sends the token in the response
+
+        // Store the token in local storage
+        localStorage.setItem('authToken', token);
+
         console.log('Login successful, redirecting to homepage...');
         router.push('/'); // Redirect to homepage on successful login
       } else {
