@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('');
@@ -22,7 +23,7 @@ export default function RegisterPage() {
       const response = await fetch('https://look-my-app.vercel.app/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password }), // Including username
+        body: JSON.stringify({ username, email, password }),
       });
 
       if (response.ok) {
@@ -114,6 +115,14 @@ export default function RegisterPage() {
             Register
           </button>
         </form>
+
+        {/* Login link */}
+        <p className="mt-4 text-center text-gray-600">
+          Have an account?{' '}
+          <Link href="/login" className="text-blue-500 hover:text-blue-700 transition-colors">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
