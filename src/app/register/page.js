@@ -1,3 +1,4 @@
+// register/page.js
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -24,12 +25,11 @@ export default function RegisterPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
+        credentials: 'include', // Ensure cookies are sent with the request
       });
 
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.token);
-        router.push('/');
+        router.push('/'); // Redirect to homepage on successful registration
       } else {
         const errorData = await response.json();
         setError(errorData.error);

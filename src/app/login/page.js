@@ -1,3 +1,4 @@
+// login/page.js
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -16,11 +17,11 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        credentials: 'include', // Ensure cookies are sent with the request
       });
 
       if (response.ok) {
-        // No need to set token in localStorage; cookies will handle it
-        router.push('/'); // Redirect to the main dashboard
+        router.push('/'); // Redirect to homepage on successful login
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Invalid login credentials. Please try again.');
