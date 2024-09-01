@@ -1,4 +1,3 @@
-// register/page.js
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,6 +9,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -25,17 +25,20 @@ export default function RegisterPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
-        credentials: 'include', // Ensure cookies are sent with the request
       });
 
       if (response.ok) {
-        router.push('/'); // Redirect to homepage on successful registration
+        setSuccess('Registration successful! You can now log in.');
+        setError(''); // Clear any previous error messages
+        router.push('/login'); // Redirect to login page on successful registration
       } else {
         const errorData = await response.json();
-        setError(errorData.error);
+        setError(errorData.error || 'Registration failed. Please try again.');
+        setSuccess('');
       }
     } catch (err) {
       setError('Network error. Please try again.');
+      setSuccess('');
     }
   };
 
@@ -105,6 +108,12 @@ export default function RegisterPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
               <span>{error}</span>
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+              {success}
             </div>
           )}
 
