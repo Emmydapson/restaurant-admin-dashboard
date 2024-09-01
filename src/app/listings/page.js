@@ -16,6 +16,7 @@ export default function ListingsPage() {
         const response = await fetch('https://look-my-app.vercel.app/api/listings/');
         if (!response.ok) throw new Error('Failed to fetch listings');
         const data = await response.json();
+        console.log('Fetched Data:', data);
         setListings(data);
       } catch (err) {
         console.error(err.message);

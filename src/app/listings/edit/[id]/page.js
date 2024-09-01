@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 
-
 export default function EditListingPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -25,8 +24,9 @@ export default function EditListingPage() {
   useEffect(() => {
     const fetchListing = async () => {
       setLoading(true);
+      setError('');
       try {
-        const response = await fetch(`https://look-my-app.vercel.app/api/listings/:id`);
+        const response = await fetch(`https://look-my-app.vercel.app/api/listings/${id}`); // Corrected URL
         if (!response.ok) throw new Error('Failed to fetch listing');
         const data = await response.json();
         setListing(data);
@@ -60,7 +60,7 @@ export default function EditListingPage() {
       const formData = new FormData();
       Object.entries(listing).forEach(([key, value]) => formData.append(key, value));
 
-      const response = await fetch(`/api/listings/${id}`, {
+      const response = await fetch(`https://look-my-app.vercel.app/api/listings/${id}`, {
         method: 'PUT',
         body: formData,
       });
@@ -70,7 +70,7 @@ export default function EditListingPage() {
         throw new Error(errorData.message || 'Failed to update the listing.');
       }
 
-      router.push('/listings');
+      router.push('/listings'); // Redirect after successful update
     } catch (err) {
       setError(err.message);
     } finally {
@@ -87,7 +87,7 @@ export default function EditListingPage() {
         <p className="text-red-500 mb-4">{error}</p>
       ) : (
         <form onSubmit={handleSubmit}>
-          {/* Add form fields for all attributes similar to AddListingPage */}
+          {/* Form fields for all attributes */}
           <input type="text" name="title" value={listing.title} onChange={handleChange} placeholder="Title" required className="input" />
           <input type="file" name="coverImage" onChange={handleImageChange} className="input" />
           <input type="file" name="logo" onChange={handleImageChange} className="input" />
