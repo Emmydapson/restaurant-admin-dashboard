@@ -12,6 +12,8 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
+      console.log('Attempting login with email:', email);
+
       const response = await fetch('https://look-my-app.vercel.app/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -20,13 +22,16 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
+        console.log('Login successful, redirecting to homepage...');
         router.push('/'); // Redirect to homepage on successful login
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Invalid login credentials. Please try again.');
+        console.error('Login failed:', errorData);
       }
     } catch (err) {
       setError('Network error. Please check your connection and try again.');
+      console.error('Network error during login:', err);
     }
   };
 

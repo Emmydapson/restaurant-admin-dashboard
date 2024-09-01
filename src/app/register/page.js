@@ -17,10 +17,13 @@ export default function RegisterPage() {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+      console.error('Error: Passwords do not match.');
       return;
     }
 
     try {
+      console.log('Registering user with data:', { username, email });
+
       const response = await fetch('https://look-my-app.vercel.app/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,15 +33,18 @@ export default function RegisterPage() {
       if (response.ok) {
         setSuccess('Registration successful! You can now log in.');
         setError(''); // Clear any previous error messages
+        console.log('Registration successful, redirecting to login...');
         router.push('/login'); // Redirect to login page on successful registration
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Registration failed. Please try again.');
         setSuccess('');
+        console.error('Registration failed:', errorData);
       }
     } catch (err) {
       setError('Network error. Please try again.');
       setSuccess('');
+      console.error('Network error during registration:', err);
     }
   };
 
