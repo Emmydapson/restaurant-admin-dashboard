@@ -6,21 +6,25 @@ import Image from 'next/image';
 export default function ListingsPage() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(''); // New error state
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchListings = async () => {
       setLoading(true);
-      setError(''); // Reset error state before fetching
+      setError('');
       try {
         const response = await fetch('https://look-my-app.vercel.app/api/listings/');
         if (!response.ok) throw new Error('Failed to fetch listings');
-        const data = await response.json();
-        console.log('Fetched Data:', data);
-        setListings(data);
+
+        const data = await response.json();  // Correctly parse the response JSON
+
+        console.log('Fetched Data:', data);  // Debugging log
+
+        // Ensure we're setting the 'listings' state with the correct array
+        setListings(data.listings || []);  // Use 'data.listings' array or an empty array if it's missing
       } catch (err) {
         console.error(err.message);
-        setError('An error occurred while fetching listings. Please try again.'); // Set error message
+        setError('An error occurred while fetching listings. Please try again.');
       } finally {
         setLoading(false);
       }
