@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 export default function AddListingPage() {
   const router = useRouter();
   const [listing, setListing] = useState({
-    coverImage: '',
-    logo: '',
+    coverImage: null,
+    logo: null,
     title: '',
     category: '',
     address: '',
@@ -22,11 +22,9 @@ export default function AddListingPage() {
   const handleChange = (e) => setListing({ ...listing, [e.target.name]: e.target.value });
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setListing({ ...listing, [e.target.name]: reader.result });
-      reader.readAsDataURL(file);
+    const { name, files } = e.target;
+    if (files && files[0]) {
+      setListing({ ...listing, [name]: files[0] });
     }
   };
 
@@ -37,11 +35,20 @@ export default function AddListingPage() {
     setLoading(true);
     try {
       const formData = new FormData();
-      Object.entries(listing).forEach(([key, value]) => formData.append(key, value));
+      Object.entries(listing).forEach(([key, value]) => {
+        if (value !== null) {
+          formData.append(key, value);
+        }
+      });
+
+      const token = localStorage.getItem('token'); // Get the token from local storage
 
       const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
         method: 'POST',
         body: formData,
+        headers: {
+          'Authorization': `Bearer ${token}`, // Include the token in headers
+        },
       });
 
       if (!response.ok) {
