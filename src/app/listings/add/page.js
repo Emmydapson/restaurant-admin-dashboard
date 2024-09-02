@@ -31,7 +31,12 @@ export default function AddListingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+  
+    if (!listing.title || !listing.coverImage || !listing.logo) {
+      setError('Title, cover image, and logo are required.');
+      return;
+    }
+  
     setLoading(true);
     try {
       const formData = new FormData();
@@ -40,29 +45,30 @@ export default function AddListingPage() {
           formData.append(key, value);
         }
       });
-
-      const token = localStorage.getItem('token'); // Get the token from local storage
-
+  
+      const token = localStorage.getItem('authToken');
+  
       const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
         method: 'POST',
         body: formData,
         headers: {
-          'Authorization': `Bearer ${token}`, // Include the token in headers
+          'Authorization': `Bearer ${token}`,
         },
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to add the listing.');
       }
-
-      router.push('/listings'); // Redirect to the listings page
+  
+      router.push('/listings');
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-md mt-8">
