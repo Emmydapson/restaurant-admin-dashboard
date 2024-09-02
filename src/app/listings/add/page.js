@@ -46,7 +46,7 @@ export default function AddListingPage() {
         }
       });
   
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('authToken'); // Fetch token from localStorage
   
       const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
         method: 'POST',
@@ -61,14 +61,13 @@ export default function AddListingPage() {
         throw new Error(errorData.message || 'Failed to add the listing.');
       }
   
-      router.push('/listings');
+      router.push('/listings'); // Redirect to listings page upon success
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-md mt-8">

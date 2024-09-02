@@ -13,15 +13,22 @@ export default function ListingsPage() {
       setLoading(true);
       setError('');
       try {
-        const response = await fetch('https://look-my-app.vercel.app/api/listings/');
+        const token = localStorage.getItem('authToken'); // Get the token from localStorage
+    
+        const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
         if (!response.ok) throw new Error('Failed to fetch listings');
+    
+        const data = await response.json(); // Correctly parse the response JSON
 
-        const data = await response.json();  // Correctly parse the response JSON
-
-        console.log('Fetched Data:', data);  // Debugging log
+        console.log('Fetched Data:', data); // Debugging log
 
         // Ensure we're setting the 'listings' state with the correct array
-        setListings(data.listings || []);  // Use 'data.listings' array or an empty array if it's missing
+        setListings(data.listings || []); // Use 'data.listings' array or an empty array if it's missing
       } catch (err) {
         console.error(err.message);
         setError('An error occurred while fetching listings. Please try again.');
@@ -60,7 +67,13 @@ export default function ListingsPage() {
           {listings.map((listing) => (
             <div key={listing.id} className="border p-4 rounded shadow-md">
               {/* Listing details with edit link */}
-              <Image src={listing.coverImage} alt={listing.title} width={100} height={100} className="mb-2 rounded" />
+              <Image 
+                src={`https://look-my-app.vercel.app/uploads/${listing.coverImage}`} 
+                alt={listing.title} 
+                width={100} 
+                height={100} 
+                className="mb-2 rounded" 
+              />
               <h2 className="text-lg font-bold">{listing.title}</h2>
               <p className="text-gray-600">{listing.address}</p>
               <p className="text-gray-700">{listing.description}</p>
