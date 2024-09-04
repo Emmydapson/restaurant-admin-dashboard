@@ -29,7 +29,7 @@ export default function EditMap() {
     // Fetch map details for editing
     const fetchMapDetails = async () => {
       try {
-        const response = await axios.get(`https://look-my-app.vercel.app/api/maps/:id`);
+        const response = await axios.get(`https://look-my-app.vercel.app/api/maps/${id}`);
         setCity(response.data.city);
       } catch (error) {
         console.error('Failed to fetch map details', error);
@@ -50,7 +50,7 @@ export default function EditMap() {
 
     try {
       await axios.put(
-        `https://look-my-app.vercel.app/api/maps/:id`,
+        `https://look-my-app.vercel.app/api/maps/${id}`,
         { city }, // Send updated city data
         {
           headers: {

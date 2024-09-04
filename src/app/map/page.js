@@ -15,7 +15,7 @@ export default function ManageMaps() {
     // Fetch map data from backend
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://look-my-app.vercel.app//api/maps');
+        const response = await axios.get('https://look-my-app.vercel.app/api/maps');
         setMaps(response.data);
         setLoading(false);
       } catch (error) {

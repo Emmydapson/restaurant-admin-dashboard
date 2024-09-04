@@ -5,7 +5,7 @@ import Image from 'next/image';
 export default function ManageCategories() {
   const [categoryName, setCategoryName] = useState('');
   const [categories, setCategories] = useState([]);
-  
+  const [error, setError] = useState('');
 
   // Fetch categories from backend
   useEffect(() => {
@@ -19,6 +19,7 @@ export default function ManageCategories() {
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+      setError('Failed to load categories');
     }
   };
 
@@ -42,9 +43,11 @@ export default function ManageCategories() {
         setCategoryName(''); // Clear the input field after adding
       } else {
         console.error('Error adding category');
+        setError('Failed to add category');
       }
     } catch (error) {
       console.error('Error adding category:', error);
+      setError('Failed to add category');
     }
   };
 
