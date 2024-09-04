@@ -15,10 +15,13 @@ export default function ManageMaps() {
     // Fetch map data from backend
     const fetchData = async () => {
       try {
+        console.log('Fetching map data...');
         const response = await axios.get('https://look-my-app.vercel.app/api/maps');
+        console.log('Map data fetched:', response.data);
         setMaps(response.data);
         setLoading(false);
       } catch (error) {
+        console.error('Failed to load maps:', error);
         setError('Failed to load maps');
         setLoading(false);
       }
@@ -27,15 +30,17 @@ export default function ManageMaps() {
     // Fetch API key securely from backend
     const fetchApiKey = async () => {
       const token = localStorage.getItem('token'); // Securely get the token
+      console.log('Fetching API key with token:', token);
       try {
         const response = await axios.get('https://look-my-app.vercel.app/api/maps/api-key', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log('API key fetched:', response.data.apiKey);
         setApiKey(response.data.apiKey);
       } catch (error) {
-        console.error('Failed to fetch API key', error);
+        console.error('Failed to fetch API key:', error);
       }
     };
 
@@ -44,10 +49,12 @@ export default function ManageMaps() {
   }, []);
 
   const handleEditClick = (id) => {
+    console.log('Editing map with ID:', id);
     router.push(`/map/edit/${id}`);
   };
 
   const handleAddMap = () => {
+    console.log('Navigating to add map page');
     router.push('/map/add');
   };
 
@@ -86,7 +93,7 @@ export default function ManageMaps() {
                   height="250"
                   frameBorder="0"
                   style={{ border: 0 }}
-                  src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${map.city}`}
+                  src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(map.city)}`}
                   allowFullScreen
                 ></iframe>
                 <div className="p-4">
