@@ -12,28 +12,43 @@ export default function ListingsPage() {
     const fetchListings = async () => {
       setLoading(true);
       setError('');
+
+      console.log('Fetching listings...'); // Step 1: Starting fetch
+
       try {
-        const token = localStorage.getItem('authToken'); // Get the token from localStorage
-    
+        const token = localStorage.getItem('authToken'); // Step 2: Get the token from localStorage
+        console.log('Auth Token:', token); // Log the token
+
+        if (!token) {
+          throw new Error('No auth token found');
+        }
+
         const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) throw new Error('Failed to fetch listings');
-    
-        const data = await response.json(); // Correctly parse the response JSON
+        console.log('Response Status:', response.status); // Step 3: Log the response status
 
-        console.log('Fetched Data:', data); // Debugging log
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Error Response:', errorData); // Step 4: Log the error response from the server
+          throw new Error('Failed to fetch listings');
+        }
+
+        const data = await response.json(); // Step 5: Correctly parse the response JSON
+        console.log('Fetched Data:', data); // Debugging log of fetched data
 
         // Ensure we're setting the 'listings' state with the correct array
-        setListings(data.listings || []); // Use 'data.listings' array or an empty array if it's missing
+        setListings(data.listings || []); // Step 6: Set the listings or an empty array if missing
+
       } catch (err) {
-        console.error(err.message);
+        console.error('Fetch Error:', err.message); // Step 7: Log any caught errors
         setError('An error occurred while fetching listings. Please try again.');
       } finally {
         setLoading(false);
+        console.log('Loading state set to false'); // Step 8: Log that loading has finished
       }
     };
 

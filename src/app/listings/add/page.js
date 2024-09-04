@@ -19,11 +19,15 @@ export default function AddListingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleChange = (e) => setListing({ ...listing, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    console.log(`Handling change for field: ${e.target.name}, Value: ${e.target.value}`);
+    setListing({ ...listing, [e.target.name]: e.target.value });
+  };
 
   const handleImageChange = (e) => {
     const { name, files } = e.target;
     if (files && files[0]) {
+      console.log(`Handling image change for field: ${name}, File name: ${files[0].name}`);
       setListing({ ...listing, [name]: files[0] });
     }
   };
@@ -32,22 +36,30 @@ export default function AddListingPage() {
     e.preventDefault();
     setError('');
   
+    console.log('Form submission started');
+  
     if (!listing.title || !listing.coverImage || !listing.logo) {
-      setError('Title, cover image, and logo are required.');
+      const errorMessage = 'Title, cover image, and logo are required.';
+      console.error(errorMessage);
+      setError(errorMessage);
       return;
     }
   
     setLoading(true);
     try {
+      console.log('Creating form data');
       const formData = new FormData();
       Object.entries(listing).forEach(([key, value]) => {
         if (value !== null) {
+          console.log(`Appending ${key}: ${value instanceof File ? value.name : value}`);
           formData.append(key, value);
         }
       });
   
-      const token = localStorage.getItem('authToken'); // Fetch token from localStorage
+      const token = localStorage.getItem('authToken');
+      console.log('Fetched auth token from localStorage');
   
+      console.log('Sending POST request to add listing');
       const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
         method: 'POST',
         body: formData,
@@ -58,14 +70,18 @@ export default function AddListingPage() {
   
       if (!response.ok) {
         const errorData = await response.json();
+        console.error(`Failed to add listing: ${errorData.message}`);
         throw new Error(errorData.message || 'Failed to add the listing.');
       }
   
-      router.push('/listings'); // Redirect to listings page upon success
+      console.log('Listing added successfully, redirecting to listings page');
+      router.push('/listings');
     } catch (err) {
+      console.error(`Error during form submission: ${err.message}`);
       setError(err.message);
     } finally {
       setLoading(false);
+      console.log('Form submission ended');
     }
   };
 
