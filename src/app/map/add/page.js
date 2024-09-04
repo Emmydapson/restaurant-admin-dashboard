@@ -17,13 +17,14 @@ export default function AddMap() {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token); // Log the token
 
     try {
       setLoading(true);
       await axios.post(
         'https://look-my-app.vercel.app/api/maps',
-        { city }, // Only send the city name
+        { city },
         {
           headers: {
             Authorization: `Bearer ${token}`,
