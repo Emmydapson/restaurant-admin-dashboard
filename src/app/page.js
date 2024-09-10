@@ -30,15 +30,7 @@ export default function DashboardPage() {
             </span>
           </Link>
         </div>
-        <div className="bg-white p-8 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold mb-2 text-gray-700">Gestione Categorie</h2>
-          <p className="mb-4 text-gray-600">Gestisci le diverse categorie di luoghi.</p>
-          <Link href="/categories" aria-label="Vai alle Categorie">
-            <span className="inline-block bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors">
-              Vai alle Categorie
-            </span>
-          </Link>
-        </div>
+        
         <div className="bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold mb-2 text-gray-700">Gestione Mappe</h2>
           <p className="mb-4 text-gray-600">Gestisci le mappe per le varie città in Italia.</p>

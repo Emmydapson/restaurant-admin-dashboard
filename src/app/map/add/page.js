@@ -6,14 +6,16 @@ import axios from 'axios';
 export default function AddMap() {
   const router = useRouter();
   const [city, setCity] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!city) {
-      setError('Please enter a city name.');
+    if (!city || !imageUrl || !description) {
+      setError('All fields are required.');
       return;
     }
 
@@ -24,7 +26,7 @@ export default function AddMap() {
       setLoading(true);
       await axios.post(
         'https://look-my-app.vercel.app/api/maps',
-        { city },
+        { city, imageUrl, description },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,7 +58,30 @@ export default function AddMap() {
             required
           />
         </div>
-        
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Image URL</label>
+          <input
+            type="text"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="Enter image URL"
+            className="mt-1 p-2 border border-gray-300 rounded w-full"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter map description"
+            className="mt-1 p-2 border border-gray-300 rounded w-full"
+            required
+          />
+        </div>
+
         {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 text-red-800 bg-red-100 border border-red-300 rounded flex items-center">

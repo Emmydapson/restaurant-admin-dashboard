@@ -145,14 +145,8 @@ export default function ManageMaps() {
 
     // Fetch API key securely from backend
     const fetchApiKey = async () => {
-      const token = localStorage.getItem('authToken'); // Securely get the token
-      console.log('Fetching API key with token:', token);
       try {
-        const response = await axios.get('https://look-my-app.vercel.app/api/maps/api-key', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get('https://look-my-app.vercel.app/api/maps/api-key');
         console.log('API key fetched:', response.data.apiKey);
         setApiKey(response.data.apiKey);
       } catch (error) {
@@ -213,14 +207,14 @@ export default function ManageMaps() {
                 key={map._id}
                 className="bg-white shadow-md rounded-lg overflow-hidden"
               >
-                <iframe
+                <Image
+                  src={map.imageUrl}
+                  alt={`Map of ${map.city}`}
                   width="100%"
                   height="250"
-                  frameBorder="0"
                   style={{ border: 0 }}
-                  src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(map.city)}&maptype=roadmap&style=${encodeURIComponent(JSON.stringify(mapStyles))}`}
-                  allowFullScreen
-                ></iframe>
+                />
+
                 <div className="p-4">
                   <h2 className="text-xl font-semibold">{map.city}</h2>
                   <button
