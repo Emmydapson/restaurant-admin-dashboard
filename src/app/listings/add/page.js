@@ -50,14 +50,10 @@ export default function AddListingPage() {
         }
       });
   
-      const token = localStorage.getItem('authToken');
-  
       const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
         method: 'POST',
         body: formData,
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        // Removed authorization header
       });
   
       if (!response.ok) {
