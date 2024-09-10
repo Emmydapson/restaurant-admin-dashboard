@@ -13,26 +13,22 @@ export default function AddMap() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    // Check if all fields are filled
     if (!city || !imageUrl || !description) {
       setError('All fields are required.');
       return;
     }
 
-    const token = localStorage.getItem('authToken');
-    console.log('Token:', token); // Log the token
-
     try {
       setLoading(true);
-      await axios.post(
-        'https://look-my-app.vercel.app/api/maps',
-        { city, imageUrl, description },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // Make POST request to add a new map (no authentication required)
+      await axios.post('https://look-my-app.vercel.app/api/maps', {
+        city,
+        imageUrl,
+        description,
+      });
+
       alert('Map added successfully!');
       setLoading(false);
       router.push('/map'); // Redirect to the map page to see the update
@@ -85,14 +81,29 @@ export default function AddMap() {
         {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 text-red-800 bg-red-100 border border-red-300 rounded flex items-center">
-            <svg className="w-5 h-5 mr-2 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5 mr-2 text-red-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
             <p>{error}</p>
           </div>
         )}
 
-        <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors" disabled={loading}>
+        <button
+          type="submit"
+          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors"
+          disabled={loading}
+        >
           {loading ? 'Adding...' : 'Add Map'}
         </button>
       </form>
