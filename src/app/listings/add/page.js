@@ -15,19 +15,19 @@ export default function AddListingPage() {
     googleNavigator: '',
     email: '',
     phone: '',
+    latitude: '', // Added latitude
+    longitude: '' // Added longitude
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    console.log(`Handling change for field: ${e.target.name}, Value: ${e.target.value}`);
     setListing({ ...listing, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e) => {
     const { name, files } = e.target;
     if (files && files[0]) {
-      console.log(`Handling image change for field: ${name}, File name: ${files[0].name}`);
       setListing({ ...listing, [name]: files[0] });
     }
   };
@@ -36,30 +36,22 @@ export default function AddListingPage() {
     e.preventDefault();
     setError('');
   
-    console.log('Form submission started');
-  
     if (!listing.title || !listing.coverImage || !listing.logo) {
-      const errorMessage = 'Title, cover image, and logo are required.';
-      console.error(errorMessage);
-      setError(errorMessage);
+      setError('Title, cover image, and logo are required.');
       return;
     }
   
     setLoading(true);
     try {
-      console.log('Creating form data');
       const formData = new FormData();
       Object.entries(listing).forEach(([key, value]) => {
         if (value !== null) {
-          console.log(`Appending ${key}: ${value instanceof File ? value.name : value}`);
           formData.append(key, value);
         }
       });
   
       const token = localStorage.getItem('authToken');
-      console.log('Fetched auth token from localStorage');
   
-      console.log('Sending POST request to add listing');
       const response = await fetch('https://look-my-app.vercel.app/api/listings/', {
         method: 'POST',
         body: formData,
@@ -70,18 +62,14 @@ export default function AddListingPage() {
   
       if (!response.ok) {
         const errorData = await response.json();
-        console.error(`Failed to add listing: ${errorData.message}`);
         throw new Error(errorData.message || 'Failed to add the listing.');
       }
   
-      console.log('Listing added successfully, redirecting to listings page');
       router.push('/listings');
     } catch (err) {
-      console.error(`Error during form submission: ${err.message}`);
       setError(err.message);
     } finally {
       setLoading(false);
-      console.log('Form submission ended');
     }
   };
 
@@ -223,6 +211,34 @@ export default function AddListingPage() {
             value={listing.phone}
             onChange={handleChange}
             placeholder="Phone"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Latitude */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Latitude</label>
+          <input
+            type="text"
+            name="latitude"
+            value={listing.latitude}
+            onChange={handleChange}
+            placeholder="Latitude"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        {/* Longitude */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Longitude</label>
+          <input
+            type="text"
+            name="longitude"
+            value={listing.longitude}
+            onChange={handleChange}
+            placeholder="Longitude"
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           />
