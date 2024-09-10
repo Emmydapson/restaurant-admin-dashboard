@@ -44,9 +44,6 @@ export default function RootLayout({ children }) {
                   <Link href="/listings" className="block py-2 px-4 hover:bg-gray-200">Gestisci Annunci</Link>
                 </li>
                 <li>
-                  <Link href="/categories" className="block py-2 px-4 hover:bg-gray-200">Gestisci Categorie</Link>
-                </li>
-                <li>
                   <Link href="/map" className="block py-2 px-4 hover:bg-gray-200">Gestisci Mappe</Link>
                 </li>
               </ul>
